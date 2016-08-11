@@ -20,18 +20,6 @@ RUN /usr/bin/phpize; ./configure; make; make install
 RUN echo "extension=redis.so" > /etc/php5/mods-available/redis.ini
 RUN php5enmod redis
 
-# Node
-RUN mkdir -p /tmp/node
-WORKDIR /tmp/node
-ENV NODE_VERSION 0.10.35
-ENV NPM_VERSION 2.2.0
-RUN curl -SLO "http://nodejs.org/dist/v$NODE_VERSION/node-v$NODE_VERSION-linux-x64.tar.gz" \
-    && tar -xzf "node-v$NODE_VERSION-linux-x64.tar.gz" -C /usr/local --strip-components=1 \
-    && rm "node-v$NODE_VERSION-linux-x64.tar.gz" \
-    && npm install -g npm@"$NPM_VERSION" \
-    && npm cache clear \
-    && rm -rf /tmp/*
-
 # MySQL conf
 RUN sed -i -e"s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
 
@@ -52,7 +40,7 @@ ADD files/start.sh /usr/local/bin/start.sh
 RUN mkdir -p /tmp/node
 WORKDIR /var/multrix
 RUN chown www-data:www-data /var/multrix
-RUN service mysql start && service redis-server start && mysql -e "create database tickets"
+RUN service mysql start && service redis-server start 
 
 # Expose ports
 EXPOSE 80
