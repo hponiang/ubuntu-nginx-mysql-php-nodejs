@@ -7,7 +7,7 @@ RUN DEBIAN_FRONTEND=noninteractive
 RUN apt-get -qq update
 
 # Install
-RUN apt-get -y --force-yes install wget curl git unzip supervisor g++ make nginx mysql-server mysql-client redis-server php5-cli php5-fpm php5-dev php5-mysql php5-curl php5-intl php5-mcrypt php5-memcache php5-imap php5-sqlite
+RUN apt-get -y --force-yes install wget curl git unzip supervisor g++ make nginx mysql-server mysql-client redis-server php5-cli php5-fpm php5-dev php5-mysql php5-curl php5-intl php5-mcrypt php5-memcache php5-imap 
 
 RUN bash -c "wget http://getcomposer.org/composer.phar && mv composer.phar /usr/local/bin/composer && chmod +x /usr/local/bin/composer"
 
@@ -19,6 +19,7 @@ WORKDIR /tmp/php-redis/phpredis-2.2.5
 RUN /usr/bin/phpize; ./configure; make; make install
 RUN echo "extension=redis.so" > /etc/php5/mods-available/redis.ini
 RUN php5enmod redis
+
 
 # MySQL conf
 RUN sed -i -e"s/^bind-address\s*=\s*127.0.0.1/bind-address = 0.0.0.0/" /etc/mysql/my.cnf
@@ -42,6 +43,8 @@ WORKDIR /var/multrix
 RUN chown www-data:www-data /var/multrix
 RUN service mysql start && service redis-server start 
 
+#xdebug
+RUN apt-get -y --force-yes php5-xdebug
 # Expose ports
 EXPOSE 80
 EXPOSE 443
